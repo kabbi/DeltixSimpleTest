@@ -18,7 +18,6 @@ public class SimpleTest {
             diffProcessor.doProcess(sortedList1, sortedList2);
             if (!sortedList1.equals(sortedList2) || !sortedList1.equals(sortedList2_) || sortedList1.getPerformedOperations() != operations) {
                 System.out.println("Test case: " + ++test + " Failed. Inputs: mustBeEqual: [" + sortedList1_ + "] expected: [" + sortedList2_ + "]");
-                System.out.println("Test case: " + ++test + " Failed. Inputs: mustBeEqual: [" + sortedList1_ + "] expected: [" + sortedList2_ + "]");
                 System.out.println("Your output " + sortedList1);
                 System.out.println("Performed operations: " + sortedList1.getPerformedOperations() + ", expected " + operations);
                 System.out.println();
@@ -26,7 +25,7 @@ public class SimpleTest {
                 System.out.println("Test case: " + ++test + " Succeed. Inputs: mustBeEqual: [" + sortedList1_ + "] expected: [" + sortedList2_ + "]");
                 System.out.println();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("Test case: " + ++test + " Exception. Inputs: mustBeEqual: [" + sortedList1_ + "] expected: [" + sortedList2_ + "]");
             System.out.println();
             diffProcessor.doProcess(sortedList1_, sortedList2_);
