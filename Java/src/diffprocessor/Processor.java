@@ -54,16 +54,7 @@ public class Processor {
             }
             if (toEqualEntry.getValue() > expectedEntry.getValue()) {
                 // Greater then target - add before
-
-                // A little hack here - if we hit the limit, just replace the value
-                // This should work because it happens only at the last item of the lists
-                if (mustBeEqualTo.getCount() == mustBeEqualTo.getLimit()) {
-                    SortedLimitedList.Entry<Double> prevEntry = toEqualEntry.getPrevious();
-                    mustBeEqualTo.remove(toEqualEntry);
-                    mustBeEqualTo.addAfter(prevEntry, expectedEntry.getValue());
-                } else {
-                    mustBeEqualTo.addBefore(toEqualEntry, expectedEntry.getValue());
-                }
+                mustBeEqualTo.addBefore(toEqualEntry, expectedEntry.getValue());
             } else {
                 // Just skip
                 toEqualEntry = toEqualEntry.getNext();
