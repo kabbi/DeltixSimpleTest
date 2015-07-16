@@ -1,17 +1,21 @@
 import diffprocessor.Processor;
 import diffprocessor.SortedLimitedList;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by VavilauA on 6/19/2015.
  */
 public class SimpleTest {
-    static Processor diffProcessor = new Processor(10);
-    static SortedLimitedList<Double> sortedList1 = new SortedLimitedList<Double>(10);
-    static SortedLimitedList<Double> sortedList2 = new SortedLimitedList<Double>(10);
-    static SortedLimitedList<Double> sortedList1_ = new SortedLimitedList<Double>(10);
-    static SortedLimitedList<Double> sortedList2_ = new SortedLimitedList<Double>(10);
+    static final int LIMIT = 10;
+    static Processor diffProcessor = new Processor(LIMIT);
+    static SortedLimitedList<Double> sortedList1 = new SortedLimitedList<Double>(LIMIT);
+    static SortedLimitedList<Double> sortedList2 = new SortedLimitedList<Double>(LIMIT);
+    static SortedLimitedList<Double> sortedList1_ = new SortedLimitedList<Double>(LIMIT);
+    static SortedLimitedList<Double> sortedList2_ = new SortedLimitedList<Double>(LIMIT);
     static int test = 0;
     static void doTest(int operations) {
         try {
@@ -48,6 +52,39 @@ public class SimpleTest {
         doTest(operations);
     }
 
+    static void doManyRandomTests(int count, int seed) {
+
+        Random random = new Random(seed);
+
+        for (int testIdx = 0; testIdx < count; testIdx++) {
+            int itemCount1 = random.nextInt(20);
+            List<Double> list1 = new ArrayList<Double>();
+            for (int i = 0; i < itemCount1; i++) {
+                list1.add((double) random.nextInt(10));
+            }
+            list1.sort(Comparator.naturalOrder());
+
+            int itemCount2 = random.nextInt(20);
+            List<Double> list2 = new ArrayList<Double>();
+            for (int i = 0; i < itemCount2; i++) {
+                list2.add((double) random.nextInt(10));
+            }
+            list2.sort(Comparator.naturalOrder());
+
+            int limit = Math.max(itemCount1, itemCount2);
+            SortedLimitedList<Double> sList1 = new SortedLimitedList<Double>(limit);
+            sList1.fromList(list1);
+            SortedLimitedList<Double> sList2 = new SortedLimitedList<Double>(limit);
+            sList2.fromList(list2);
+            diffProcessor.doProcess(sList1, sList2);
+
+            if (!sList1.equals(sList2)) {
+                System.out.println("Test fail " + testIdx + ": original " + list1 + " expected [" + sList2 + "] found [" + sList1 + "]");
+            }
+        }
+        System.out.println("Performed " + count + " random tests");
+    }
+
 
     public static void main(String[] args) {
         Double[] needToBeEqual_0 = { 0.0, 1.0, 2.0, 3.0, 4.0, 6.0, 7.0 };
@@ -81,5 +118,11 @@ public class SimpleTest {
         Double[] needToBeEqual_7 = { 0.0, 0.0};
         Double[] expected_7 = { 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
         test(needToBeEqual_7, expected_7, 10);
+
+        Double[] needToBeEqual_8 = {0.0, 1.0, 1.0, 6.0, 6.0, 7.0};
+        Double[] expected_8 = {2.0, 2.0, 3.0, 3.0, 3.0, 4.0, 5.0, 5.0, 7.0, 7.0};
+        test(needToBeEqual_8, expected_8, 14);
+
+        doManyRandomTests(1 * 1000 * 1000, 12942);
     }
 }

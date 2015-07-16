@@ -25,11 +25,20 @@ public class Processor {
                 mustBeEqualTo.remove(toEqualEntry);
                 toEqualEntry = nextEntry;
                 continue;
+            } else if (toEqualEntry.getValue() > expectedEntry.getValue()) {
+                // Don't skip greater items, skip the expected list item instead
             } else {
-                // Just skip
+                // Skip equal items
                 toEqualEntry = toEqualEntry.getNext();
             }
             expectedEntry = expectedEntry.getNext();
+        }
+
+        // Remove remaining items
+        while (toEqualEntry != null) {
+            SortedLimitedList.Entry<Double> nextEntry = toEqualEntry.getNext();
+            mustBeEqualTo.remove(toEqualEntry);
+            toEqualEntry = nextEntry;
         }
     }
 
@@ -61,6 +70,12 @@ public class Processor {
             }
             expectedEntry = expectedEntry.getNext();
         }
+
+        // Append remaining items
+        while (expectedEntry != null) {
+            mustBeEqualTo.addLast(expectedEntry.getValue());
+            expectedEntry = expectedEntry.getNext();
+        }
     }
 
     public void doProcess(SortedLimitedList<Double> mustBeEqualTo, SortedLimitedList<Double> expectedOutput) {
@@ -70,25 +85,5 @@ public class Processor {
 
         // Insert items not present in mustBeEqualTo
         performInsertPass(mustBeEqualTo, expectedOutput);
-
-        // Process the remaining items
-        int itemCountDelta = mustBeEqualTo.getCount() - expectedOutput.getCount();
-
-        // First list has more items than needed, remove remaining
-        if (itemCountDelta > 0) {
-            for (int i = 0; i < itemCountDelta; i++) {
-                mustBeEqualTo.remove(mustBeEqualTo.getLast());
-            }
-        }
-
-        // First list has less items than needed, append remaining
-        if (itemCountDelta < 0) {
-            SortedLimitedList.Entry<Double> expectedEntry = expectedOutput.getLast();
-            SortedLimitedList.Entry<Double> insertAfterEntry = mustBeEqualTo.getLast();
-            for (int i = 0; i < -itemCountDelta; i++) {
-                mustBeEqualTo.addAfter(insertAfterEntry, expectedEntry.getValue());
-                expectedEntry = expectedEntry.getPrevious();
-            }
-        }
     }
 }
